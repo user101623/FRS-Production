@@ -1,8 +1,38 @@
-# React + Vite
+# Face Recognition System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Introduction
+Our project, Face Recognition System is a modern web application designed to simplify the process of face recognition. Built with React, this application provides an intuitive interface for users to register their faces and check in using webcam integration. It is ideal for applications such as attendance tracking, security systems, and personalized user experiences.
 
-Currently, two official plugins are available:
+## Technologies Used
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React**: For building the user interface.
+- **React Router**: For navigation between different components.
+- **Tailwind CSS**: For styling the application.
+- **Webcam**: For capturing user images during registration and check-in.
+
+## Installation
+
+To run this project locally, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/user101623/FRS-Production.git
+   ```
+
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Acknowledgments
+
+- Thanks to the contributors and libraries that made this project possible.

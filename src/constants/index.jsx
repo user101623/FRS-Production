@@ -6,31 +6,35 @@ import weiImage from "../assets/profile-pictures/weiImage.png";
 import kaiImage from "../assets/profile-pictures/kaiImage.png";
 
 export const navItems = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/" },
-  { label: "Features", href: "/"}
+  { label: "Home", id: "home" },
+  { label: "About Us", id: "about-us" },
+  { label: "Features", id: "features" }
 ];
 
 export const aboutUs = [
   {
     user: "Kai Chun Goh",
     image: kaiImage,
-    text: "Kai Chun Goh has honed his skills in C++ through self-driven projects, now exploring frontend technologies to expand his expertise.",
+    linkedin: "https://www.linkedin.com/in/kai-chun-goh-756430289/",
+    github: "https://github.com/GohKaiChun",
   },
   {
     user: "Khang Huynh Bao Duong",
     image: khangImage,
-    text: "Khang boasts proficiency in C++, Python, HTML, and more. He is eager to deepen his knowledge of AI-focused programming languages.",
+    linkedin: "https://www.linkedin.com/in/huynh-bao-khang-duong-227388251/",
+    github: "https://github.com/Khang261002",
   },
   {
     user: "Wei Jin Gnoh",
     image: weiImage,
-    text: "Wei Jin Gnoh, skilled in C++ and Python, is now focused on AI technologies to keep pace with the rapidly evolving tech world.",
+    linkedin: "www.linkedin.com/in/weijingnoh",
+    github: "https://github.com/user101623",
   },
   {
     user: "Yu Qing Leong",
     image: yuImage,
-    text: "Yu Qing Leong, a Software Tester at NetApp, is skilled in C, HTML, and Python, with a goal of mastering backend development to enhance her software knowledge.",
+    linkedin: "https://www.linkedin.com/in/yu-qing-leong-98b301281/",
+    github: "https://github.com/YuQingLeong",
   },
 ];
 
