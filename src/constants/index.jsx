@@ -6,9 +6,9 @@ import weiImage from "../assets/profile-pictures/weiImage.png";
 import kaiImage from "../assets/profile-pictures/kaiImage.png";
 
 export const navItems = [
-  { label: "Home", id: "home" },
-  { label: "About Us", id: "about-us" },
-  { label: "Features", id: "features" }
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/"},
+  { label: "Features", href: "/"}
 ];
 
 export const aboutUs = [
@@ -27,7 +27,7 @@ export const aboutUs = [
   {
     user: "Wei Jin Gnoh",
     image: weiImage,
-    linkedin: "www.linkedin.com/in/weijingnoh",
+    linkedin: "https://www.linkedin.com/in/weijingnoh",
     github: "https://github.com/user101623",
   },
   {
