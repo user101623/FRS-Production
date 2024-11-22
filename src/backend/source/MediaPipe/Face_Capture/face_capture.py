@@ -78,7 +78,7 @@ def capture(name) -> Generator[bytes, None, None]:
     with open(os.path.join(__location__, "../../../static/json/streaming_data.json"), "w") as outfile:
         outfile.write(json_object)
 
-    webcam = cv2.VideoCapture(1, cv2.CAP_DSHOW)     # for Windows
+    webcam = cv2.VideoCapture(0, cv2.CAP_DSHOW)     # for Windows
     # webcam = cv2.VideoCapture(0)                    # for Other OSes
     flag = True
     if not os.path.exists("Data/Images"):

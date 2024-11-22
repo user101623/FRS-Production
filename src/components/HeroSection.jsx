@@ -23,7 +23,7 @@ const HeroSection = () => {
             Register
           </button>
         </Link>
-        <Link to="/check-in">
+        <Link to="/checkin">
           <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200">
             Check In
           </button>
