@@ -2,6 +2,7 @@ from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from source.MediaPipe.Face_Capture import face_capture
 from source.FaceRecognition.Face_Recognize import face_recognize
+from source.KNN import model_accuracy
 import base64
 import cv2
 import numpy as np
@@ -37,18 +38,37 @@ def update_streaming_status():
         return jsonify({'status': 'success', 'stopped': data['stopped']})
     return jsonify({'status': 'error', 'message': 'Invalid data'}), 400
 
+@app.route('/train_data', methods=['POST'])
+def train_data():
+    """
+    Endpoint to trigger training.
+    """
+    try:
+        # Simulate training process
+        print(f"Starting training...")
+        model_accuracy.train_and_test()
+        print(f"Training completed.")
+
+        # Return a success response
+        return jsonify({"message": f"Training completed"}), 200
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/process_image', methods=['POST'])
 def process_image():
     data = request.json
     image_data = data['image'].split(',')[1]
-    image = base64.b64decode(image_data) 
+    image = base64.b64decode(image_data)
     np_image = np.frombuffer(image, np.uint8)
     frame = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
+
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     last_face_coordinates = None
     stable_face_coordinates = None
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=3)
+
     if len(faces) > 0:
         last_face_coordinates = faces[0]
         stable_face_coordinates = last_face_coordinates
@@ -58,6 +78,7 @@ def process_image():
     if last_face_coordinates is not None:
         x, y, w, h = last_face_coordinates
         cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 5)
+
     _, buffer = cv2.imencode('.jpg', frame)
     processed_image_base64 = base64.b64encode(buffer).decode('utf-8')
     return jsonify({'processedImage': f"data:image/jpeg;base64,{processed_image_base64}"})

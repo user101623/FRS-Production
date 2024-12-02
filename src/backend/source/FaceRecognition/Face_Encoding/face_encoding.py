@@ -32,15 +32,15 @@ def load_all_images(path):
 
     return images_data
 
-def encode_new_faces(filename="dataset_faces.pkl", update=False):
+def encode_new_faces(train_dir='../../../../../Data/Users', model_save_path='../../../../../Data/Model/trained_fr_model.pkl', update=False):
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-    path_to_encodings = os.path.join(__location__, '../../../../Data/Encodings/{}'.format(filename))
-    path_to_images = os.path.join(__location__, '../../../../Data/Users')
+    path_to_encodings = os.path.join(__location__, model_save_path)
+    path_to_images = os.path.join(__location__, train_dir)
     all_face_encodings = get_all_encodings(path_to_encodings)
     
     # Add new or update existing face encodings
     for (username, image) in load_all_images(path_to_images):
-        if (not update) and (username in all_face_encodings):
+        if (username in all_face_encodings) and (not update):
             print("{}'s face has already been encoded".format(username))
             continue
         else:

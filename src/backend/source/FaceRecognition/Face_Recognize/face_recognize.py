@@ -21,6 +21,36 @@ def best_match_face(face_encodings, known_face_encodings, known_face_names):
         face_names.append(name)
     return face_names
 
+def predict(frame, use_GPU, process_this_frame, known_face_encodings, known_face_names):
+    face_locations = []
+    face_encodings = []
+    face_names = []
+
+    # Resize frame of video to 1/4 size for faster face recognition processing
+    # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+    if not use_GPU:
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        rgb_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+    else:
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # Only process every other frame of video to save time
+    if process_this_frame:
+        # Find all the faces and face encodings in the current frame of video
+        face_locations = face_recognition.face_locations(rgb_frame)
+        # Re-sample the face for more precise recognition
+        if use_GPU:
+            face_encodings = face_recognition.face_encodings(rgb_frame, face_locations, 100)
+        else:
+            face_encodings = face_recognition.face_encodings(rgb_frame, face_locations, model="large")
+
+        face_names = best_match_face(face_encodings, known_face_encodings, known_face_names)
+
+    # Process less frames only for higher fps
+    process_this_frame = not process_this_frame
+
+    return list(zip(face_names, face_locations))
+
 def recognize():
     all_face_encodings = face_encoding.encode_new_faces()
 
@@ -29,9 +59,6 @@ def recognize():
     known_face_names = list(all_face_encodings.keys())
 
     # Initialize some variables
-    face_locations = []
-    face_encodings = []
-    face_names = []
     process_this_frame = True
     use_GPU = dlib.DLIB_USE_CUDA
     if use_GPU:
@@ -47,31 +74,10 @@ def recognize():
         if successful_frame_read:
             frame = cv2.flip(frame, 1)
 
-            # Resize frame of video to 1/4 size for faster face recognition processing
-            # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-            if not use_GPU:
-                small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-                rgb_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-            else:
-                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-            # Only process every other frame of video to save time
-            if process_this_frame:
-                # Find all the faces and face encodings in the current frame of video
-                face_locations = face_recognition.face_locations(rgb_frame)
-                # Re-sample the face for more precise recognition
-                if use_GPU:
-                    face_encodings = face_recognition.face_encodings(rgb_frame, face_locations, 100)
-                else:
-                    face_encodings = face_recognition.face_encodings(rgb_frame, face_locations, model="large")
-
-                face_names = best_match_face(face_encodings, known_face_encodings, known_face_names)
-
-            # Process less frames only for higher fps
-            process_this_frame = not process_this_frame
+            predictions = predict(frame, use_GPU, process_this_frame, known_face_encodings, known_face_names)
 
             # Display the results
-            for (top, right, bottom, left), name in zip(face_locations, face_names):
+            for name, (top, right, bottom, left) in predictions:
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size
                 if not use_GPU:
                     top *= 4

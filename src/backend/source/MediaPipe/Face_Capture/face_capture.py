@@ -10,18 +10,12 @@ import os
 from source.MediaPipe.Face_Detection import face_detection
 
 
-def crop_and_save(username, frame, coordinate, path, num_images, count=[0]):
-    # x, y, w, h = coordinate
-    # cropped_frame = frame[y:y + h, x:x + w]
-    # image = Image.fromarray(cropped_frame)
+def crop_and_save(username, frame, path, num_images, count=[0]):
     image = Image.fromarray(frame)
 
-    if count[0] == 0:
-        image.save(path + "/{}.jpg".format(username))
-
-    if not os.path.exists(path + "/../Users/{0}".format(username)):
-        os.makedirs(path + "/../Users/{0}".format(username))
-    image.save(path + "/../Users/{0}/{0}_{1:02d}.jpg".format(username, count[0]))
+    if not os.path.exists(path + username):
+        os.makedirs(path + username)
+    image.save(path + "{0}/{0}_{1:02d}.jpg".format(username, count[0]))
 
     count[0] += 1
     if count[0] >= num_images:
@@ -51,9 +45,9 @@ def validFace(frame, coordinate):
         print("Face is not in the current frame")
         return False
 
-    # if is_blur(frame, threshold=200):
-    #     print("Image is too blurry")
-    #     return False
+    if is_blur(frame, threshold=150):
+        print("Image is too blurry")
+        return False
 
     target_area = 0.15 * frame_width * frame_height
     current_area = w * h
@@ -78,21 +72,19 @@ def capture(name) -> Generator[bytes, None, None]:
     with open(os.path.join(__location__, "../../../static/json/streaming_data.json"), "w") as outfile:
         outfile.write(json_object)
 
-    webcam = cv2.VideoCapture(0, cv2.CAP_DSHOW)     # for Windows
-    # webcam = cv2.VideoCapture(0)                    # for Other OSes
+    webcam = cv2.VideoCapture(1, cv2.CAP_DSHOW)     # for Windows
+    # webcam = cv2.VideoCapture(0)                    # for Other OSes because cv2.CAP_DSHOW is not working properly
     flag = True
-    if not os.path.exists("Data/Images"):
-        os.makedirs("Data/Images")
 
-    landmarks_list = []
-    standardized_landmarks_list = []
-    normalized_landmarks_list = []
+    data_path = os.path.join(__location__, "../../../../../Data/Users/")
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
     
     while webcam.isOpened() and flag:
         successful_frame_read, frame = webcam.read()
         if successful_frame_read:
             frame = cv2.flip(frame, 1)
-            face_coordinates, landmarks, standardized_landmarks, normalized_landmarks = face_detection.detection(frame)
+            face_coordinates = face_detection.detection(frame)
 
             if len(face_coordinates) == 1:
                 coordinate = face_coordinates[0]
@@ -100,11 +92,7 @@ def capture(name) -> Generator[bytes, None, None]:
 
                 # Take the face image when the face is in the window and big enough
                 if validFace(frame, coordinate):
-                    flag = crop_and_save(name, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), coordinate, "Data/Images", 100)
-
-                    landmarks_list.append(landmarks[0])
-                    standardized_landmarks_list.append(standardized_landmarks[0])
-                    normalized_landmarks_list.append(normalized_landmarks[0])
+                    flag = crop_and_save(name, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), data_path, 100)
 
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 5)
 
@@ -117,11 +105,6 @@ def capture(name) -> Generator[bytes, None, None]:
     json_object = json.dumps(dictionary)
     with open(os.path.join(__location__, "../../../static/json/streaming_data.json"), "w") as outfile:
         outfile.write(json_object)
-
-    # Save the landmarks to files
-    # save_face_landmarks_list_to_file(name, landmarks_list, "Data/Landmarks/Original")
-    # save_face_landmarks_list_to_file(name, standardized_landmarks_list, "Data/Landmarks/Standardized")
-    # save_face_landmarks_list_to_file(name, normalized_landmarks_list, "Data/Landmarks/Normalized")
 
     # Release the webcam
     webcam.release()
