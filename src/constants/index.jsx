@@ -7,8 +7,8 @@ import kaiImage from "../assets/profile-pictures/kaiImage.png";
 
 export const navItems = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/"},
-  { label: "Features", href: "/"}
+  { label: "About Us", href: "/#about-us"},
+  { label: "Features", href: "/#features"}
 ];
 
 export const aboutUs = [

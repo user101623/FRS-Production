@@ -1,5 +1,4 @@
 import HeroSection from "./HeroSection";
-import Footer from "./Footer";
 import FeatureSection from "./FeatureSection";
 import AboutUsSection from "./AboutUsSection";
 
@@ -9,7 +8,6 @@ const Home = () => {
       <HeroSection />
       <FeatureSection />
       <AboutUsSection />
-      <Footer />
     </>
   );
 };

@@ -9,8 +9,7 @@ import face_recognition
 from sklearn.metrics import confusion_matrix
 from source.FaceRecognition.Face_Encoding.face_encoding import encode_new_faces as train_fr
 from source.FaceRecognition.Face_Recognize.face_recognize import predict as predict_fr
-from fr_knn import train as train_fr_knn, predict as predict_fr_knn
-
+from .fr_knn import train as train_fr_knn, predict as predict_fr_knn
 
 testing_setup = {
     "trained_fr_model.pkl": {

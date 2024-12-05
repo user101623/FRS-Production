@@ -2,6 +2,7 @@ import { aboutUs } from "../constants";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquareGithub } from "@fortawesome/free-brands-svg-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import confusionMatrixImage from "../assets/confusion_matrix.png";
 
 const AboutUsSection = () => {
   return (
@@ -37,6 +38,15 @@ const AboutUsSection = () => {
           </div>
         ))}
       </div>
+      {confusionMatrixImage && (
+        <div className="flex mt-10 justify-center">
+          <img
+            src={confusionMatrixImage}
+            alt="Confusion Matrix"
+            className="rounded-lg w-1/2 border border-orange-700 shadow-sm shadow-orange-400 mx-2 my-4"
+          />
+        </div>
+      )}
     </div>
   );
 };
