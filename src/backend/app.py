@@ -19,19 +19,8 @@ def checkin():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # @app.route('/success/<username>', methods=['POST'])
-@app.route('/success/<username>', methods=['POST'])
+@app.route('/success/<username>')
 def success(username):
-    # Capture the image for the user
-    face_capture.capture(username)
-    
-    # Call the train_and_test function after capturing the image
-    try:
-        print(f"Starting training after capturing images for {username}...")
-        model_accuracy.train_and_test()
-        print("Training completed successfully.")
-    except Exception as e:
-        print(f"Error during training: {e}")
-
     return Response(face_capture.capture(username),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 

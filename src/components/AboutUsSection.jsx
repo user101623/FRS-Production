@@ -2,7 +2,7 @@ import { aboutUs } from "../constants";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquareGithub } from "@fortawesome/free-brands-svg-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import confusionMatrixImage from "../assets/confusion_matrix.png";
+import confusionMatrixImage from "../backend/static/images/confusion_matrices.png";
 
 const AboutUsSection = () => {
   return (

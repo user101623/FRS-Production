@@ -69,10 +69,11 @@ def capture(name) -> Generator[bytes, None, None]:
         "stopped": False
     }
     json_object = json.dumps(dictionary)
+    print("\n\n\nCapturing ...\n\n\n")
     with open(os.path.join(__location__, "../../../static/json/streaming_data.json"), "w") as outfile:
         outfile.write(json_object)
 
-    webcam = cv2.VideoCapture(1, cv2.CAP_DSHOW)     # for Windows
+    webcam = cv2.VideoCapture(0, cv2.CAP_DSHOW)     # for Windows
     # webcam = cv2.VideoCapture(0)                    # for Other OSes because cv2.CAP_DSHOW is not working properly
     flag = True
 
