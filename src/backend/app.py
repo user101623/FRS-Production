@@ -18,7 +18,6 @@ def checkin():
     return Response(face_recognize.recognize(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-# @app.route('/success/<username>', methods=['POST'])
 @app.route('/success/<username>')
 def success(username):
     return Response(face_capture.capture(username),

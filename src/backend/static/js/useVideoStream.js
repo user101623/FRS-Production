@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 export default function useVideoStream(username) {
     const [imgSrc, setImgSrc] = useState(`http://127.0.0.1:5000/success/${username}`);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTrainingStarted, setIsTrainingStarted] = useState(false);
 
     const updateStoppedStatus = useCallback((isStopped) => {
         fetch('http://127.0.0.1:5000/update_streaming_status', {
@@ -27,14 +28,16 @@ export default function useVideoStream(username) {
         setImgSrc(`http://127.0.0.1:5000/success/${username}`);
 
         const checkStreamingData = () => {
-            fetch('http://127.0.0.1:5000/static/json/streaming_data.json')
-                .then((response) => response.json())
-                .then((json) => {
-                    if (json.stopped) {
-                        clearVideoStream();
-                        setIsModalOpen(true); // Trigger the modal when stopped is true
-                    }
-                });
+            if (!isTrainingStarted) {
+                fetch('http://127.0.0.1:5000/static/json/streaming_data.json')
+                    .then((response) => response.json())
+                    .then((json) => {
+                        if (json.stopped) {
+                            clearVideoStream();
+                            setIsModalOpen(true);
+                        }
+                    });
+            }
         };
 
         const intervalID = setInterval(checkStreamingData, 1000);
@@ -42,7 +45,11 @@ export default function useVideoStream(username) {
         return () => {
             clearInterval(intervalID);
         };
-    }, [username, clearVideoStream]);
+    }, [username, clearVideoStream, isTrainingStarted]);
 
-    return { imgSrc, clearVideoStream, isModalOpen, setIsModalOpen };
+    const startTraining = () => {
+        setIsTrainingStarted(true);
+    };
+
+    return { imgSrc, clearVideoStream, isModalOpen, setIsModalOpen, startTraining };
 }
