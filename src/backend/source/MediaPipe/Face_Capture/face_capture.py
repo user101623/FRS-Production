@@ -93,7 +93,7 @@ def capture(name) -> Generator[bytes, None, None]:
 
                 # Take the face image when the face is in the window and big enough
                 if validFace(frame, coordinate):
-                    flag = crop_and_save(name, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), data_path, 10)
+                    flag = crop_and_save(name, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), data_path, 100)
 
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 5)
 

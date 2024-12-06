@@ -1,17 +1,31 @@
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
-from source.MediaPipe.Face_Capture import face_capture
-from source.FaceRecognition.Face_Recognize import face_recognize
-from source.KNN import model_accuracy
 import base64
 import cv2
 import numpy as np
 import json
 import os
+import dlib
 
+from source.MediaPipe.Face_Capture import face_capture
+from source.FaceRecognition.Face_Recognize import face_recognize
+from source.KNN import model_accuracy
+from source.KNN import fr_knn
+
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 app = Flask(__name__)
 CORS(app)
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+use_GPU = dlib.DLIB_USE_CUDA
+if use_GPU:
+    print("Using GPU for face recognition")
+else:
+    print("Using CPU for face recognition")
+
+model_path = os.path.join(__location__, "../../Data/Model/trained_fr_knn_model.clf")
+if os.path.isfile(model_path):
+    model = fr_knn.load_knn_model(model_path=model_path)
+else:
+    model = None
 
 @app.route('/checkin', methods=['POST'])
 def checkin():
@@ -61,22 +75,29 @@ def process_image():
     image = base64.b64decode(image_data)
     np_image = np.frombuffer(image, np.uint8)
     frame = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
+    frame = cv2.flip(frame, 1)
 
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    last_face_coordinates = None
-    stable_face_coordinates = None
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=3)
+    if model:
+        if use_GPU:
+            predictions = fr_knn.predict(model, frame, 0.5)
+        else:
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+            predictions = fr_knn.predict(model, small_frame, 0.5)
 
-    if len(faces) > 0:
-        last_face_coordinates = faces[0]
-        stable_face_coordinates = last_face_coordinates
-    else:
-        if stable_face_coordinates is not None:
-            last_face_coordinates = stable_face_coordinates
-    if last_face_coordinates is not None:
-        x, y, w, h = last_face_coordinates
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 5)
+    for name, (top, right, bottom, left) in predictions:
+        if not use_GPU:
+            top *= 4
+            right *= 4
+            bottom *= 4
+            left *= 4
+        cv2.rectangle(frame, (left, top), (right, bottom), (255, 255, 255), 5)
+
+        # Draw a label with a name below the face
+        font = cv2.FONT_HERSHEY_DUPLEX
+        if name == "Unknown":
+            cv2.putText(frame, name, (left, bottom + 25), font, 1, (0, 0, 255), 2)
+        else:
+            cv2.putText(frame, name, (left, bottom + 25), font, 1, (0, 255, 0), 2)
 
     _, buffer = cv2.imencode('.jpg', frame)
     processed_image_base64 = base64.b64encode(buffer).decode('utf-8')

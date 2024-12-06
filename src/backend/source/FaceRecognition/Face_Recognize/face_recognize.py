@@ -9,7 +9,8 @@ def best_match_face(face_encodings, known_face_encodings, known_face_names):
     face_names = []
     for encoding in face_encodings:
         # See if the face is a match for the known face(s)
-        matches = face_recognition.compare_faces(known_face_encodings, encoding, tolerance=0.45)
+        # matches = face_recognition.compare_faces(known_face_encodings, encoding, tolerance=0.45)
+        matches = face_recognition.compare_faces(known_face_encodings, encoding)
         name = "Unknown"
 
         # Or instead, use the known face with the smallest distance to the new face

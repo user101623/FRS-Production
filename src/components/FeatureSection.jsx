@@ -1,4 +1,5 @@
 import { features } from "../constants";
+import confusionMatrixImage from "../backend/static/images/confusion_matrices.png";
 
 const FeatureSection = () => {
   return (
@@ -33,6 +34,15 @@ const FeatureSection = () => {
           </div>
         ))}
       </div>
+      {confusionMatrixImage && (
+        <div className="flex mt-10 justify-center">
+          <img
+            src={confusionMatrixImage}
+            alt="Confusion Matrix"
+            className="rounded-lg w border border-orange-700 shadow-sm shadow-orange-400 mx-2 my-4"
+          />
+        </div>
+      )}
     </div>
   );
 };
